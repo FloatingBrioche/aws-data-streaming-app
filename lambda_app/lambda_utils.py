@@ -63,7 +63,7 @@ def request_content(
     Returns
     -------
         For a 200 response:
-            A deserialised response from 
+            A deserialised response from
             the Guardian API search endpoint
             https://open-platform.theguardian.com/documentation/search
 
@@ -84,10 +84,7 @@ def request_content(
 
     response = get_request(url + options + f"&api-key={api_key}")
 
-    if response.status_code == 200:
-        return response.json()
-    else:
-        return None
+    return {"StatusCode": response.status_code, "Body": response.json()}
 
 
 def prepare_messages(raw_response):
@@ -100,7 +97,7 @@ def prepare_messages(raw_response):
 
     Args
     ----
-        raw_response: a deserialised 200 response from 
+        raw_response: a deserialised 200 response from
             the Guardian API search endpoint
             https://open-platform.theguardian.com/documentation/search
 
@@ -137,9 +134,8 @@ def prepare_messages(raw_response):
     return prepared_messages
 
 
-def post_to_sqs(queue:str, messages: list):
-    """Posts messages to AWS SQS using boto3
-    """
+def post_to_sqs(queue: str, messages: list):
+    """Posts messages to AWS SQS using boto3"""
     sqs_client = boto3.client("sqs")
     queue_url = sqs_client.get_queue_url(QueueName=queue)["QueueUrl"]
     response = sqs_client.send_message_batch(QueueUrl=queue_url, Entries=messages)
@@ -151,6 +147,7 @@ class JSONFormatter(logging.Formatter):
 
     Takes a log record and returns the record in serialised JSON format
     """
+
     def format(self, record):
         log_obj = {
             "asctime": self.formatTime(record, self.datefmt),
