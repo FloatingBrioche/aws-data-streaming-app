@@ -34,7 +34,7 @@ The application could be expanded to make requests to and aggregate responses fr
 
 - An AWS IAM user with CLI access keys
 - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
-- [Terraform](https://developer.hashicorp.com/terraform/install)
+- [Terraform ~> v5.85.0](https://developer.hashicorp.com/terraform/install)
 - A [Guardian API access key](https://open-platform.theguardian.com/access/)
 - Python 3.12.3
 
@@ -64,7 +64,7 @@ The application could be expanded to make requests to and aggregate responses fr
 
 4. **Update the Terraform fields**
 
-    - Update the backend bucket in [Terraform providers file](terraform/providers.tf)
+    - Update the backend bucket in the [Terraform providers file](terraform/providers.tf)
     - Update the vars in the [Terraform directory](./terraform/vars.tf)
         - You can get the secret ARN via this CLI command: 
             ```bash 
@@ -76,7 +76,7 @@ The application could be expanded to make requests to and aggregate responses fr
 
 - Go to Settings > Secrets and variables > Actions.
 - Click New repository secret.
-- Use AWS_ACCESS_KEY and AWS_SECRET__ACCESS_KEY as the secrets names, adding your own values for the secrets themselves.
+- Use AWS_ACCESS_KEY and AWS_SECRET_ACCESS_KEY as the secrets names, adding your own values for the secrets themselves.
 
 6. **Run Terraform init, plan and apply**
 
@@ -95,7 +95,7 @@ Example payload:
                 "SearchTerm": "scary futuristic blobs",
                 "FromDate": "2015-12-17",
                 "ToDate": "2024-01-01",
-                "queue": "guardian"
+                "queue": "guardian_content"
                 }
 
 AWS CLI command:
