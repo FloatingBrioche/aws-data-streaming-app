@@ -50,6 +50,10 @@ jobs:
       - name: Terraform Init
         working-directory: terraform   
         run: terraform init
+      - name: Terraform Validate
+        run: terraform validate
+      - name: Terraform Format
+        run: terraform fmt
       - name: Terraform Plan
         working-directory: terraform
         run: terraform plan
