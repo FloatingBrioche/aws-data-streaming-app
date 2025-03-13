@@ -29,7 +29,7 @@ def lambda_handler(event: dict, context: dict) -> dict:
                 {
                 "SearchTerm": "scary futuristic blobs",
                 "FromDate": "2015-12-17",
-                "queue": "guardian"
+                "queue": "guardian_content"
                 }
         context: an object with attributes reflecting AWS runtime information
 
@@ -106,7 +106,7 @@ def lambda_handler(event: dict, context: dict) -> dict:
         post_to_sqs(queue, prepared_messages)
         logger.info("post_to_sqs executed successfully")
     except Exception as e:
-        logger.critical(f"Critical error during post_to_sqs execution: {repr(e)}")
+        logger.critical(f"Critical error during post_to_sqs execution: queue = {queue}, error = {repr(e)}")
         return {
             "statusCode": 500,
             "body": "Critical error experienced while processing request",
