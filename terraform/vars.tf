@@ -1,40 +1,40 @@
 variable "project_owner" {
-    description = "Name to be used for project owner in resource tags"
-    type = string
-    default = "Martin C."
+  description = "Name to be used for project owner in resource tags"
+  type        = string
+  default     = "Martin C."
 }
 
 variable "project_owner_email" {
-    description = "Email to be used for SNS notifications of critical errors"
-    type = string
-    default = "martinlambc@gmail.com"
+  description = "Email to be used for SNS notifications of critical errors"
+  type        = string
+  default     = "martinlambc@gmail.com"
 }
 
 variable "project_name" {
-    type = string
-    default = "data-streaming-app"
+  type    = string
+  default = "data-streaming-app"
 }
 
 variable "department" {
-    description = "Department name to be used in resource tags"
-    type = string
-    default = "Data Engineering"
+  description = "Department name to be used in resource tags"
+  type        = string
+  default     = "Data Engineering"
 }
 
 variable "retention_date" {
-    description = "Retention date to be used in resource tags"
-    type = string
-    default = "2025-03-31"
+  description = "Retention date to be used in resource tags"
+  type        = string
+  default     = "2025-03-31"
 }
 
 variable "secret_arn" {
-    description = "ARN of the secret containing the API key"
-    type = string
-    default = "arn:aws:secretsmanager:eu-west-2:340752809785:secret:Guardian-API-Key-MzSRM5"
+  description = "ARN of the secret containing the API key"
+  type        = string
+  default     = "arn:aws:secretsmanager:eu-west-2:340752809785:secret:Guardian-API-Key-MzSRM5"
 }
 
 variable "lambda_name" {
-    description = "Name to be given to lambda function"
-    type = string
-    default = "data_streaming_lambda"
+  description = "Name to be given to lambda function"
+  type        = string
+  default     = "data_streaming_lambda"
 }

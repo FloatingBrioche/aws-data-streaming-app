@@ -10,11 +10,11 @@ resource "null_resource" "create_dependencies" {
 
 
 data "archive_file" "layer" {
-    type = "zip"
-    source_dir =  "${path.module}/../layer" 
-    output_path =  "${path.module}/../zip_files/layer.zip"
+  type        = "zip"
+  source_dir  = "${path.module}/../layer"
+  output_path = "${path.module}/../zip_files/layer.zip"
 
-    depends_on = [ null_resource.create_dependencies ]
+  depends_on = [null_resource.create_dependencies]
 
 }
 
