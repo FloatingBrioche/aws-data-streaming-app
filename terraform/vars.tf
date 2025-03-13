@@ -7,7 +7,6 @@ variable "project_owner" {
 variable "project_owner_email" {
   description = "Email to be used for SNS notifications of critical errors"
   type        = string
-  default     = "martinlambc@gmail.com"
 }
 
 variable "project_name" {
@@ -30,7 +29,6 @@ variable "retention_date" {
 variable "secret_arn" {
   description = "ARN of the secret containing the API key"
   type        = string
-  default     = "arn:aws:secretsmanager:eu-west-2:340752809785:secret:Guardian-API-Key-MzSRM5"
 }
 
 variable "lambda_name" {
