@@ -4,7 +4,7 @@ import sys, os
 sys.path.append("./lambda_app")
 
 # Remove the Lambda layer path from sys.path
-lambda_layer_path = os.path.join(os.getcwd(), 'layer', 'python')
+lambda_layer_path = os.path.join(os.getcwd(), "layer", "python")
 if lambda_layer_path in sys.path:
     sys.path.remove(lambda_layer_path)
 
@@ -17,6 +17,7 @@ from lambda_function import lambda_handler
 
 
 ### Fixtures ###
+
 
 @pytest.fixture
 def mock_get_api_key():
@@ -44,16 +45,13 @@ def mock_post_to_sqs():
 
 @pytest.fixture
 def patch_all(
-    mock_get_api_key,
-    mock_request_content,
-    mock_prepare_messages,
-    mock_post_to_sqs
+    mock_get_api_key, mock_request_content, mock_prepare_messages, mock_post_to_sqs
 ):
     yield {
         "mock_get_api_key": mock_get_api_key,
         "mock_request_content": mock_request_content,
         "mock_prepare_messages": mock_prepare_messages,
-        "mock_post_to_sqs": mock_post_to_sqs
+        "mock_post_to_sqs": mock_post_to_sqs,
     }
 
 
@@ -96,7 +94,7 @@ class TestOutput:
         assert "body" in output
 
     def test_return_0_articles(self, patch_all, test_event):
-        patch_all['mock_prepare_messages'].return_value = []
+        patch_all["mock_prepare_messages"].return_value = []
         output = lambda_handler(test_event, "AWS")
         assert output == {"statusCode": 200, "body": "0 articles retrieved"}
 
@@ -134,29 +132,22 @@ class TestLoggingAndErrorHandling:
         assert expected_log in caplog.text
 
     def test_catches_and_logs_prepare_messages_error(
-        self,
-        test_event,
-        patch_all,
-        caplog
+        self, test_event, patch_all, caplog
     ):
         expected_log = (
             "Critical error during prepare_messages execution: KeyError('Burp!')"
         )
-        patch_all['mock_prepare_messages'].side_effect = KeyError("Burp!")
+        patch_all["mock_prepare_messages"].side_effect = KeyError("Burp!")
         output = lambda_handler(test_event, "AWS")
         assert expected_log in caplog.text
 
     def test_catches_and_logs_post_to_sqs_error(
-        self,
-        test_event,
-        patch_all,
-        client_error_message,
-        caplog
+        self, test_event, patch_all, client_error_message, caplog
     ):
-        expected_log = (
-            "Critical error during post_to_sqs execution: ClientError"
+        expected_log = "Critical error during post_to_sqs execution: queue = guardian_content, error = ClientError"
+        patch_all["mock_post_to_sqs"].side_effect = ClientError(
+            client_error_message,
+            operation_name="send_message_batch",
         )
-        patch_all['mock_post_to_sqs'].side_effect = ClientError(client_error_message,
-            operation_name="send_message_batch",)
         output = lambda_handler(test_event, "AWS")
         assert expected_log in caplog.text
