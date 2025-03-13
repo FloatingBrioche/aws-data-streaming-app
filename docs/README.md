@@ -40,13 +40,15 @@ The application could be expanded to make requests to and aggregate responses fr
 
 ## Setup Instructions
 
-1. **Clone the repo:**  
+1. **Fork the repo**
+
+2. **Clone the repo:**  
    ```bash  
    git clone https://github.com/FloatingBrioche/aws-data-streaming-app.git
    cd aws-data-streaming-app 
    ``` 
 
-2. **Add your Guardian API key to your AWS Secrets Manager**
+3. **Add your Guardian API key to your AWS Secrets Manager**
     ```bash
     aws secretsmanager create-secret \
     --name Guardian-API-Key \
@@ -54,7 +56,22 @@ The application could be expanded to make requests to and aggregate responses fr
     --secret-string "[ADD YOUR API KEY HERE]"
     ```
 
-3. **Create your Terraform State Bucket**
+4. **Retrieve and note your secret ARN**
+    Retrive the ARN using the below CLI command. Copy it to use in the next step.
+    ```bash 
+    aws secretsmanager describe-secret \
+    --secret-id Guardian-API-Key --query 'ARN' --output text
+    ```
+
+4. **Create your .tfvars file**
+    ```bash
+    cat > terraform/terraform.tfvars << EOF
+    project_owner_email = "[ADD PROJECT OWNER EMAIL]"
+    secret_arn = "[ADD SECRET ARN]"
+EOF
+    ```
+
+5. **Create your Terraform State Bucket**
     ```bash
     aws s3api create-bucket \
     --bucket [ADD YOUR BUCKET NAME] \
@@ -62,23 +79,17 @@ The application could be expanded to make requests to and aggregate responses fr
     --create-bucket-configuration LocationConstraint=[YOUR REGION]
     ```
 
-4. **Update the Terraform fields**
-
+6. **Update the Terraform fields**
     - Update the backend bucket in the [Terraform providers file](terraform/providers.tf)
-    - Update the vars in the [Terraform directory](./terraform/vars.tf)
-        - You can get the secret ARN via this CLI command: 
-            ```bash 
-            aws secretsmanager describe-secret \
-            --secret-id Guardian-API-Key --query 'ARN' --output text
-            ```
+    - Update the vars in the [Terraform directory](./terraform/vars.tf)        
 
-5. **Add your AWS access key and secret access key to the repo secrets**
+7. **Add your AWS access key and secret access key to the repo secrets**
 
 - Go to Settings > Secrets and variables > Actions.
 - Click New repository secret.
 - Use AWS_ACCESS_KEY and AWS_SECRET_ACCESS_KEY as the secrets names, adding your own values for the secrets themselves.
 
-6. **Run Terraform init, plan and apply**
+8. **Run Terraform init, plan and apply**
 
 - `cd terraform`
 - `terraform init`
