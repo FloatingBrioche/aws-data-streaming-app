@@ -85,10 +85,30 @@ def lambda_handler(event: dict, context: dict) -> dict:
             "body": "Critical error experienced while processing request",
         }
 
+    # Handle failed responses based on http code
+    if raw_response['StatusCode'] == 400:
+        return {"statusCode": 400, "body": raw_response['Body']['Message']}
+    elif raw_response['StatusCode'] == 500:
+        message = raw_response['Body']['Message']
+        return {"statusCode": 424, "body": f"Guardian API failure: {message}"}
+    elif raw_response['StatusCode'] != 200:
+        message = raw_response['Body']['Message']
+        logger.error(
+            f"unexpected API response. {raw_response['StatusCode']=}, {message=}"
+        )
+        return {"statusCode": 424, "body": f"Guardian API failure: {message}"}
+    
+    # Handle search term that yields 0 articles
+    if not raw_response['Body']['response']['results']:
+        return {
+            "statusCode": 200,
+            "body": "Search yielded 0 articles",
+        }
+
     # Prepare content into messages
     try:
         logger.info("prepare_messages invoked")
-        prepared_messages = prepare_messages(raw_response)
+        prepared_messages = prepare_messages(raw_response["Body"])
         logger.info("prepare_messages executed successfully")
     except Exception as e:
         logger.critical(f"Critical error during prepare_messages execution: {repr(e)}")
@@ -96,9 +116,6 @@ def lambda_handler(event: dict, context: dict) -> dict:
             "statusCode": 500,
             "body": "Critical error experienced while processing request",
         }
-
-    if prepared_messages == []:
-        return {"statusCode": 200, "body": "0 articles retrieved"}
 
     # Post messages to SQS
     try:
