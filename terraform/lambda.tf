@@ -27,7 +27,7 @@ resource "aws_lambda_function" "data_streaming_lambda" {
 ## IAM Role 
 
 resource "aws_iam_role" "lambda_role" {
-  name_prefix        = "data-streaming-lambdas-"
+  name        = "data-streaming-lambda-role"
   assume_role_policy = <<EOF
     {
         "Version": "2012-10-17",
@@ -63,13 +63,13 @@ data "aws_iam_policy_document" "cw_document" {
   statement {
     actions = ["logs:CreateLogStream", "logs:PutLogEvents"]
     resources = [
-      "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:*:*"
+      "${aws_cloudwatch_log_group.lambda_log_group.arn}:*"
     ]
   }
 }
 
 resource "aws_iam_policy" "cw_policy" {
-  name_prefix = "cw-policy-currency-lambda-"
+  name = "data-lambda-cw-policy"
   policy      = data.aws_iam_policy_document.cw_document.json
 }
 
@@ -88,7 +88,7 @@ data "aws_iam_policy_document" "secrets_manager_document" {
 }
 
 resource "aws_iam_policy" "secrets_manager_policy" {
-  name_prefix = "secrets_manager-policy-data-lambda-"
+  name = "data-lambda-secrets_manager-policy"
   policy      = data.aws_iam_policy_document.secrets_manager_document.json
 }
 
@@ -107,7 +107,7 @@ data "aws_iam_policy_document" "sqs_document" {
 }
 
 resource "aws_iam_policy" "sqs_policy" {
-  name_prefix = "sqs-policy-data-lambda-"
+  name = "data-lambda-sqs-policy"
   policy      = data.aws_iam_policy_document.sqs_document.json
 }
 
