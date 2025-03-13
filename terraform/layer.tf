@@ -3,9 +3,9 @@ resource "null_resource" "create_dependencies" {
     command = "pip install -r ${path.module}/../layer_requirements.txt --python-version 3.12 --platform manylinux2014_x86_64 -t ${path.module}/../layer/python --only-binary=:all: pydantic"
   }
 
-  triggers = {
-    dependencies = filemd5("${path.module}/../layer_requirements.txt")
-  }
+  # triggers = {
+  #   dependencies = filemd5("${path.module}/../layer_requirements.txt")
+  # }
 }
 
 
@@ -15,6 +15,7 @@ data "archive_file" "layer" {
     output_path =  "${path.module}/../zip_files/layer.zip"
 
     depends_on = [ null_resource.create_dependencies ]
+
 }
 
 
