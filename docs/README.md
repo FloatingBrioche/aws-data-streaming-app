@@ -1,6 +1,7 @@
 # aws-data-streaming-app
-[![tests-and-deployment](https://github.com/FloatingBrioche/aws-data-streaming-app/actions/workflows/test_and_deploy.yaml/badge.svg)](https://github.com/FloatingBrioche/aws-data-streaming-app/actions/workflows/test_and_deploy.yaml)
-[![Coverage](https://github.com/FloatingBrioche/aws-data-streaming-app/blob/main/docs/coverage.svg)](https://github.com/FloatingBrioche/aws-data-streaming-app/blob/main/docs/coverage.txt)
+[![tests-and-deployment](https://github.com/FloatingBrioche/aws-data-streaming-app/actions/workflows/test_and_deploy.yaml/badge.svg)](https://github.com/FloatingBrioche/aws-data-streaming-app/actions/workflows/test_and_deploy.yaml)~
+[![Coverage](https://github.com/FloatingBrioche/aws-data-streaming-app/blob/main/docs/coverage.svg)](https://github.com/FloatingBrioche/aws-data-streaming-app/blob/main/docs/coverage.txt)~
+[![PEP8](https://img.shields.io/badge/PEP8-compliant-green.svg)](https://www.python.org/dev/peps/pep-0008/)
 
 This application has been designed to allow the Northcoders marketing team to search for and ingest articles from the Guardian API. The application uses the Python requests library to submit a get request to the API's "search" endpoint using the passed query. Any resulting articles are then uploaded to an AWS SQS queue to be analysed for relevance and suitability downstream.
 
@@ -57,7 +58,7 @@ The application could be expanded to make requests to and aggregate responses fr
     ```
 
 4. **Retrieve and note your secret ARN**
-Retrive the ARN using the below CLI command. Copy it to use in the next step.
+- Retrive the ARN using the below CLI command. Copy it to use in the next step.
     ```bash 
     aws secretsmanager describe-secret \
     --secret-id Guardian-API-Key --query 'ARN' --output text
