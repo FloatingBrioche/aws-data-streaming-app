@@ -1,8 +1,17 @@
+### Lambda CW log group ###
+
+resource "aws_cloudwatch_log_group" "lambda_log_group" {
+  name              = "/aws/lambda/${var.lambda_name}"
+  retention_in_days = 30
+
+}
+
+
 ### App failure monitoring ###
 
 resource "aws_cloudwatch_log_metric_filter" "lambda_crit_error_filter" {
   name = "lambda_critical_error_filter"
-  log_group_name = "/aws/lambda/${var.lambda_name}"
+  log_group_name = aws_cloudwatch_log_group.lambda_log_group.name
   pattern = "{ $.message = %Critical error% }"
   metric_transformation {
     name = "critical_error"
@@ -28,7 +37,7 @@ resource "aws_cloudwatch_metric_alarm" "critical_error_alarm" {
 
 resource "aws_cloudwatch_log_metric_filter" "guardian_request_filter" {
   name = "guardian_api_request_filter"
-  log_group_name = "/aws/lambda/${var.lambda_name}"
+  log_group_name = aws_cloudwatch_log_group.lambda_log_group.name
   pattern = "{ $.message = %request_content invoked% }"
   metric_transformation {
     name = "api_request"
