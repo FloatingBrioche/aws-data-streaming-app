@@ -9,6 +9,7 @@ cffi==1.17.1
 charset-normalizer==3.4.1
 click==8.1.8
 coverage==7.6.10
+coverage-badge==1.1.2
 cryptography==44.0.0
 dparse==0.6.4
 filelock==3.16.1
