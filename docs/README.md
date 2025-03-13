@@ -68,7 +68,7 @@ Retrive the ARN using the below CLI command. Copy it to use in the next step.
     cat > terraform/terraform.tfvars << EOF
     project_owner_email = "[ADD PROJECT OWNER EMAIL]"
     secret_arn = "[ADD SECRET ARN]"
-EOF
+    EOF
     ```
 
 5. **Create your Terraform State Bucket**
