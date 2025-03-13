@@ -175,5 +175,4 @@ cython_debug/
 
 .terraform*
 terraform.tfvars
-layer
 zip_files
