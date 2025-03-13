@@ -42,7 +42,7 @@ The application could be expanded to make requests to and aggregate responses fr
 
 1. **Fork the repo**
 
-2. **Clone the repo:**  
+2. **Clone the repo**  
    ```bash  
    git clone https://github.com/FloatingBrioche/aws-data-streaming-app.git
    cd aws-data-streaming-app 
@@ -57,7 +57,7 @@ The application could be expanded to make requests to and aggregate responses fr
     ```
 
 4. **Retrieve and note your secret ARN**
-    Retrive the ARN using the below CLI command. Copy it to use in the next step.
+Retrive the ARN using the below CLI command. Copy it to use in the next step.
     ```bash 
     aws secretsmanager describe-secret \
     --secret-id Guardian-API-Key --query 'ARN' --output text
