@@ -118,16 +118,15 @@ class TestLoggingAndErrorHandling:
 
     def test_catches_and_logs_request_content_error(
         self,
-        mock_get_api_key,
         test_event,
-        mock_request_content,
+        patch_all,
         caplog,
         client_error_message,
     ):
         expected_log = (
             "Critical error during request_content execution: RequestException"
         )
-        mock_request_content.side_effect = RequestException("Yelp!")
+        patch_all["mock_request_content"].side_effect = RequestException("Yelp!")
         lambda_handler(test_event, "AWS")
         assert expected_log in caplog.text
 
