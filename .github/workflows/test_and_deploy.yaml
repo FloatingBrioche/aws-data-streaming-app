@@ -51,8 +51,8 @@ jobs:
       - name: Terraform Set Vars
         working-directory: terraform
         run: |
-          TF_VAR_project_owner_email={{ secrets.PROJECT_OWNER_EMAIL }}
-          TF_VAR_secret_arn={{ secrets.SECRET_ARN }}
+          TF_VAR_project_owner_email=${{ secrets.PROJECT_OWNER_EMAIL }}
+          TF_VAR_secret_arn=${{ secrets.SECRET_ARN }}
       - name: Terraform Format
         working-directory: terraform  
         run: terraform fmt
