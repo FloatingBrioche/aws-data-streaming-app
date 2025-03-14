@@ -62,7 +62,7 @@ jobs:
       
       - name: Create Layer
         working-directory: terraform
-        run: pip install -r layer_requirements.txt --python-version 3.12 --platform manylinux2014_x86_64 -t layer/python --only-binary=:all: pydantic
+        run: pip install -r layer_requirements.txt --python-version 3.12 --platform manylinux2014_x86_64 -t layer/python --only-binary=pydantic
 
       - name: Terraform Plan
         working-directory: terraform
