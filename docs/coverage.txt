@@ -1,7 +1,7 @@
 Name                            Stmts   Miss  Cover   Missing
 -------------------------------------------------------------
-lambda_app/lambda_classes.py        6      0   100%
-lambda_app/lambda_function.py      46      0   100%
-lambda_app/lambda_utils.py         47      0   100%
+lambda_app/lambda_classes.py        7      0   100%
+lambda_app/lambda_function.py      55      0   100%
+lambda_app/lambda_utils.py         45      0   100%
 -------------------------------------------------------------
-TOTAL                              99      0   100%
+TOTAL                             107      0   100%
