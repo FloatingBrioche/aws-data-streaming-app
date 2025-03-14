@@ -32,6 +32,11 @@ define execute_in_env
 	$(ACTIVATE_ENV) && export PYTHONPATH=${PYTHONPATH} && $1
 endef
 
+## Execute Terraform related functionalities within the terraform directory
+define execute_in_tf
+	$ cd terraform && $1 && cd $(WD)
+endef
+
 ## Build the environment requirements
 requirements: create-environment
 	$(call execute_in_env, $(PIP) install -r ./dev_requirements.txt)
@@ -59,19 +64,20 @@ dev-setup: bandit black coverage
 
 ## Run bandit security test
 security-test:
-	$(call execute_in_env, bandit -lll */*.py *c/*/*.py)
+	$(call execute_in_env, bandit -lll */*.py *c/*/*.py > docs/security_check.txt)
 
-## Run the black code check
-run-black:
+## Run the code check
+format-check:
 	$(call execute_in_env, black  ./lambda_app/*.py ./test/*/*.py)
+	$(call execute_in_tf, terraform fmt && terraform validate)
 
 ## Run the unit tests
 unit-test:
 	$(call execute_in_env, pytest test/* -vv --testdox)
 
-## Run the coverage check
-check-coverage:
-	$(call execute_in_env, coverage run --omit 'venv/*' -m pytest test/* && coverage report -m)
+## Run the coverage check and update coverage documentation
+get-coverage:
+	$(call execute_in_env, coverage run --source=lambda_app -m pytest  && coverage report -m > ./docs/coverage.txt && coverage-badge -o ./docs/coverage.svg -f)
 
 ## Run all checks
-run-checks: run-black unit-test check-coverage security-test
+run-checks: format-check unit-test get-coverage security-test
