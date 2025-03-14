@@ -7,9 +7,10 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "mc-guardian-data-streaming-terraform-state-bucket"
-    key    = "terraform-perm.tfstate"
-    region = "eu-west-2"
+    bucket  = "mc-guardian-data-streaming-terraform-state-bucket"
+    key     = "terraform-perm.tfstate"
+    region  = "eu-west-2"
+    encrypt = true
   }
 }
 
