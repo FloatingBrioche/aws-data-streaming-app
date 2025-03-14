@@ -26,8 +26,6 @@ jobs:
           aws-region: eu-west-2
       - name: Set Up Env and Requirements
         run: make requirements 
-      - name: Dev Setup
-        run: make dev-setup
       - name: Run Tests
         run: make run-checks
 
