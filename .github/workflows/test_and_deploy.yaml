@@ -37,29 +37,40 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
+      
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v3
+      
       - name: AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-2
+      
       - name: Terraform Init
         working-directory: terraform   
         run: terraform init
+      
       - name: Terraform Format
         working-directory: terraform  
         run: terraform fmt
+      
       - name: Terraform Validate
         working-directory: terraform  
         run: terraform validate
+      
+      - name: Create Layer
+        working-directory: terraform
+        run: pip install -r layer_requirements.txt --python-version 3.12 --platform manylinux2014_x86_64 -t layer/python --only-binary=:all: pydantic
+
       - name: Terraform Plan
         working-directory: terraform
         env:
           TF_VAR_project_owner_email: ${{ secrets.PROJECT_OWNER_EMAIL }}
           TF_VAR_secret_arn: ${{ secrets.SECRET_ARN }}
         run: terraform plan
+      
       - name: Terraform Apply   
         working-directory: terraform
         env:
