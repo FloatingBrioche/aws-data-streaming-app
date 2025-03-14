@@ -3,7 +3,8 @@ from typing import Literal
 
 
 class LambdaEvent(BaseModel):
-    """Pydantic model for validating Lambda events"""
+    """Pydantic model for validating Lambda events
+    Dates are YYYY-MM-DD"""
 
     SearchTerm: str = Field(min_length=2)
     FromDate: str = Field(
