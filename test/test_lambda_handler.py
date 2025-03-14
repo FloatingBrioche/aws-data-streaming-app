@@ -1,4 +1,4 @@
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 import sys, os
 
 sys.path.append("./lambda_app")
@@ -63,9 +63,10 @@ def test_event():
         "queue": "guardian_content",
     }
 
+
 @pytest.fixture
 def mock_200_raw_response():
-    return {'StatusCode': 200, "Body": {"response": {"results": ["egg"]}}}
+    return {"StatusCode": 200, "Body": {"response": {"results": ["egg"]}}}
 
 
 @pytest.fixture
@@ -97,11 +98,25 @@ class TestOutput:
         output = lambda_handler(test_event, "AWS")
         assert "body" in output
 
+    @pytest.mark.it(
+        "When 0 articles are received, returned dict body is  'Search yielded 0 articles'"
+    )
     def test_return_0_articles(self, patch_all, test_event):
-        empty_response = {'StatusCode': 200, "Body": {"response": {"results": []}}}
+        empty_response = {"StatusCode": 200, "Body": {"response": {"results": []}}}
         patch_all["mock_request_content"].return_value = empty_response
         output = lambda_handler(test_event, "AWS")
         assert output == {"statusCode": 200, "body": "Search yielded 0 articles"}
+
+    @pytest.mark.it(
+        "When X articles are received, returned dict body is  'X articles uploaded to SQS'"
+    )
+    def test_return_articles_uploaded_to_sqs(
+        self, patch_all, test_event, mock_200_raw_response
+    ):
+        patch_all["mock_request_content"].return_value = mock_200_raw_response
+        patch_all["mock_prepare_messages"].return_value = ["a", "a", "a", "a", "a", "a"]
+        output = lambda_handler(test_event, "AWS")
+        assert output == {"statusCode": 200, "body": "6 articles uploaded to SQS"}
 
 
 class TestLoggingAndErrorHandling:
@@ -135,22 +150,54 @@ class TestLoggingAndErrorHandling:
         lambda_handler(test_event, "AWS")
         assert expected_log in caplog.text
 
+    def test_handles_400_get_request_response(self, test_event, patch_all):
+        patch_all["mock_request_content"].return_value = {
+            "StatusCode": 400,
+            "Body": {"Message": "Crikey!"},
+        }
+        output = lambda_handler(test_event, "AWS")
+        expected = {"statusCode": 400, "body": "Crikey!"}
+        assert output == expected
+
+    def test_handles_500_get_request_response(self, test_event, patch_all):
+        patch_all["mock_request_content"].return_value = {
+            "StatusCode": 500,
+            "Body": {"Message": "Crikey!"},
+        }
+        output = lambda_handler(test_event, "AWS")
+        expected = {"statusCode": 424, "body": "Guardian API failure: Crikey!"}
+        assert output == expected
+
+    def test_handles_unexpected_get_request_response(self, test_event, patch_all):
+        patch_all["mock_request_content"].return_value = {
+            "StatusCode": 418,
+            "Body": {"Message": "Crikey!"},
+        }
+        output = lambda_handler(test_event, "AWS")
+        expected = {"statusCode": 424, "body": "Guardian API failure: Crikey!"}
+        assert output == expected
+
     def test_catches_and_logs_prepare_messages_error(
         self, test_event, patch_all, mock_200_raw_response, caplog
     ):
         expected_log = (
             "Critical error during prepare_messages execution: KeyError('Burp!')"
         )
-        patch_all['mock_request_content'].return_value = mock_200_raw_response
+        patch_all["mock_request_content"].return_value = mock_200_raw_response
         patch_all["mock_prepare_messages"].side_effect = KeyError("Burp!")
         output = lambda_handler(test_event, "AWS")
         assert expected_log in caplog.text
 
     def test_catches_and_logs_post_to_sqs_error(
-        self, test_event, patch_all, mock_200_raw_response, boto3_client_error_message, caplog
+        self,
+        test_event,
+        patch_all,
+        mock_200_raw_response,
+        boto3_client_error_message,
+        caplog,
     ):
         expected_log = "Critical error during post_to_sqs execution: queue = guardian_content, error = ClientError"
-        patch_all['mock_request_content'].return_value = mock_200_raw_response
+        patch_all["mock_request_content"].return_value = mock_200_raw_response
         patch_all["mock_post_to_sqs"].side_effect = ClientError(
             boto3_client_error_message,
             operation_name="send_message_batch",

@@ -56,8 +56,8 @@ def lambda_handler(event: dict, context: dict) -> dict:
         return {"statusCode": 400, "body": f"{str(e)}"}
 
     # Capture values from event
-    queue, search_term  = event.queue, event.SearchTerm
-    from_date, to_date  = event.FromDate, event.ToDate 
+    queue, search_term = event.queue, event.SearchTerm
+    from_date, to_date = event.FromDate, event.ToDate
 
     # Get API key from Secrets Manager
     try:
@@ -86,20 +86,20 @@ def lambda_handler(event: dict, context: dict) -> dict:
         }
 
     # Handle failed responses based on http code
-    if raw_response['StatusCode'] == 400:
-        return {"statusCode": 400, "body": raw_response['Body']['Message']}
-    elif raw_response['StatusCode'] == 500:
-        message = raw_response['Body']['Message']
+    if raw_response["StatusCode"] == 400:
+        return {"statusCode": 400, "body": raw_response["Body"]["Message"]}
+    elif raw_response["StatusCode"] == 500:
+        message = raw_response["Body"]["Message"]
         return {"statusCode": 424, "body": f"Guardian API failure: {message}"}
-    elif raw_response['StatusCode'] != 200:
-        message = raw_response['Body']['Message']
+    elif raw_response["StatusCode"] != 200:
+        message = raw_response["Body"]["Message"]
         logger.error(
             f"unexpected API response. {raw_response['StatusCode']=}, {message=}"
         )
         return {"statusCode": 424, "body": f"Guardian API failure: {message}"}
-    
+
     # Handle search term that yields 0 articles
-    if not raw_response['Body']['response']['results']:
+    if not raw_response["Body"]["response"]["results"]:
         return {
             "statusCode": 200,
             "body": "Search yielded 0 articles",
@@ -123,7 +123,9 @@ def lambda_handler(event: dict, context: dict) -> dict:
         post_to_sqs(queue, prepared_messages)
         logger.info("post_to_sqs executed successfully")
     except Exception as e:
-        logger.critical(f"Critical error during post_to_sqs execution: queue = {queue}, error = {repr(e)}")
+        logger.critical(
+            f"Critical error during post_to_sqs execution: queue = {queue}, error = {repr(e)}"
+        )
         return {
             "statusCode": 500,
             "body": "Critical error experienced while processing request",
@@ -131,5 +133,5 @@ def lambda_handler(event: dict, context: dict) -> dict:
 
     return {
         "statusCode": 200,
-        "body": f"{len(prepared_messages)} messages uploaded to SQS",
+        "body": f"{len(prepared_messages)} articles uploaded to SQS",
     }
