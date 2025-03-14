@@ -34,7 +34,7 @@ endef
 
 ## Execute Terraform related functionalities within the terraform directory
 define execute_in_tf
-	$ cd terraform && $1 && cd $(WD)
+	cd terraform && $1
 endef
 
 ## Build the dev environment requirements
@@ -42,16 +42,20 @@ requirements: create-environment
 	$(call execute_in_env, $(PIP) install -r ./dev_requirements.txt)
 
 
-### Run Checks ###
+## Terraform code linting and validation
+tf-check:
+		$(call execute_in_tf, terraform fmt && terraform validate)
+
+
+### Run Python Checks ###
 
 ## Run bandit security test
 security-test:
 	$(call execute_in_env, bandit -lll */*.py *c/*/*.py > docs/security_check.txt)
 
 ## Run the code check
-format-check:
+run-black:
 	$(call execute_in_env, black  ./lambda_app/*.py ./test/*/*.py)
-	$(call execute_in_tf, terraform fmt && terraform validate)
 
 ## Run the unit tests
 unit-test:
@@ -62,4 +66,4 @@ get-coverage:
 	$(call execute_in_env, coverage run --source=lambda_app -m pytest  && coverage report -m > ./docs/coverage.txt && coverage-badge -o ./docs/coverage.svg -f)
 
 ## Run all checks
-run-checks: format-check unit-test get-coverage security-test
+run-checks: run-black unit-test get-coverage security-test
