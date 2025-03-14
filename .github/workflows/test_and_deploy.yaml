@@ -61,7 +61,7 @@ jobs:
         run: terraform validate
       
       - name: Create Layer
-        run: pip install -r layer_requirements.txt --python-version 3.12 --platform manylinux2014_x86_64 -t layer/python --only-binary=pydantic
+        run: pip install -r layer_requirements.txt --python-version 3.12 --platform manylinux2014_x86_64 -t layer/python --prefer-binary
 
       - name: Terraform Plan
         working-directory: terraform
