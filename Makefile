@@ -37,27 +37,9 @@ define execute_in_tf
 	$ cd terraform && $1 && cd $(WD)
 endef
 
-## Build the environment requirements
+## Build the dev environment requirements
 requirements: create-environment
 	$(call execute_in_env, $(PIP) install -r ./dev_requirements.txt)
-
-
-### Set up dev tools ###
-
-## Install bandit
-bandit:
-	$(call execute_in_env, $(PIP) install bandit)
-
-## Install black
-black:
-	$(call execute_in_env, $(PIP) install black)
-
-## Install coverage
-coverage:
-	$(call execute_in_env, $(PIP) install coverage)
-
-## Set up dev requirements (bandit, safety, black)
-dev-setup: bandit black coverage 
 
 
 ### Run Checks ###
