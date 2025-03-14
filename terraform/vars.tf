@@ -29,6 +29,7 @@ variable "retention_date" {
 variable "secret_arn" {
   description = "ARN of the secret containing the API key"
   type        = string
+  sensitive   = true
 }
 
 variable "lambda_name" {
