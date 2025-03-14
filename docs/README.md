@@ -1,7 +1,8 @@
 # aws-data-streaming-app
-[![tests-and-deployment](https://github.com/FloatingBrioche/aws-data-streaming-app/actions/workflows/test_and_deploy.yaml/badge.svg)](https://github.com/FloatingBrioche/aws-data-streaming-app/actions/workflows/test_and_deploy.yaml)~
-[![Coverage](https://github.com/FloatingBrioche/aws-data-streaming-app/blob/main/docs/coverage.svg)](https://github.com/FloatingBrioche/aws-data-streaming-app/blob/main/docs/coverage.txt)~
-[![PEP8](https://img.shields.io/badge/PEP8-compliant-green.svg)](https://www.python.org/dev/peps/pep-0008/)
+[![tests-and-deployment](https://github.com/FloatingBrioche/aws-data-streaming-app/actions/workflows/test_and_deploy.yaml/badge.svg)](https://github.com/FloatingBrioche/aws-data-streaming-app/actions/workflows/test_and_deploy.yaml) 
+[![Coverage](https://github.com/FloatingBrioche/aws-data-streaming-app/blob/main/docs/coverage.svg)](https://github.com/FloatingBrioche/aws-data-streaming-app/blob/main/docs/coverage.txt) 
+[![PEP8](https://img.shields.io/badge/PEP8-compliant-limegreen.svg)](https://www.python.org/dev/peps/pep-0008/) 
+[![bandit security check](https://img.shields.io/badge/security_issues-0-limegreen.svg)](https://github.com/FloatingBrioche/aws-data-streaming-app/blob/main/docs/security_check.txt)
 
 This application has been designed to allow the Northcoders marketing team to search for and ingest articles from the Guardian API. The application uses the Python requests library to submit a get request to the API's "search" endpoint using the passed query. Any resulting articles are then uploaded to an AWS SQS queue to be analysed for relevance and suitability downstream.
 
@@ -58,7 +59,7 @@ The application could be expanded to make requests to and aggregate responses fr
     ```
 
 4. **Retrieve and note your secret ARN**
-- Retrive the ARN using the below CLI command. Copy it to use in the next step.
+- Retrive the ARN using the below CLI command. Note it to use in two of the following step.
     ```bash 
     aws secretsmanager describe-secret \
     --secret-id Guardian-API-Key --query 'ARN' --output text
@@ -84,11 +85,15 @@ The application could be expanded to make requests to and aggregate responses fr
     - Update the backend bucket in the [Terraform providers file](terraform/providers.tf)
     - Update the vars in the [Terraform directory](./terraform/vars.tf)        
 
-7. **Add your AWS access key and secret access key to the repo secrets**
+7. **Add repo secrets to enable CI pipeline**
 
 - Go to Settings > Secrets and variables > Actions.
 - Click New repository secret.
-- Use AWS_ACCESS_KEY and AWS_SECRET_ACCESS_KEY as the secrets names, adding your own values for the secrets themselves.
+- Add the following secrets:
+    - AWS_ACCESS_KEY
+    - AWS_SECRET_ACCESS_KEY
+    - PROJECT_OWNER_EMAIL
+    - SECRET_ARN
 
 8. **Run Terraform init, plan and apply**
 
@@ -96,6 +101,14 @@ The application could be expanded to make requests to and aggregate responses fr
 - `terraform init`
 - `terraform plan`
 - `terraform apply`
+
+## **Teardown instructions**
+
+- In the terraform directory, run `terraform destroy`
+
+## **Tests and checks**
+
+A Makefile is provided using which 
 
 ## Usage
 
@@ -117,6 +130,11 @@ aws lambda invoke \
     --cli-binary-format raw-in-base64-out \
     --function-name data_streaming_lambda \
     --cli-binary-format raw-in-base64-out \
-    --payload '{ "SearchTerm": "[Add Your Search Term]", "queue": "guardian_content" }' \
+    --payload '{
+                "SearchTerm": "[ADD SEARCH TERM]",
+                "FromDate": "[ADD DATE]",
+                "ToDate": "[ADD DATE]",
+                "queue": "guardian_content"
+                }' \
     lambda-response.json
 ```
