@@ -2,7 +2,7 @@
 [![tests-and-deployment](https://github.com/FloatingBrioche/aws-data-streaming-app/actions/workflows/test_and_deploy.yaml/badge.svg)](https://github.com/FloatingBrioche/aws-data-streaming-app/actions/workflows/test_and_deploy.yaml) 
 [![Coverage](https://github.com/FloatingBrioche/aws-data-streaming-app/blob/main/docs/coverage.svg)](https://github.com/FloatingBrioche/aws-data-streaming-app/blob/main/docs/coverage.txt) 
 [![PEP8](https://img.shields.io/badge/PEP8-compliant-limegreen.svg)](https://www.python.org/dev/peps/pep-0008/) 
-[![bandit security check](https://img.shields.io/badge/security_issues-0-limegreen.svg)](https://github.com/FloatingBrioche/aws-data-streaming-app/blob/main/docs/security_check.txt)
+[![bandit security check](https://img.shields.io/badge/bandit_security_check-0_issues-limegreen.svg)](https://github.com/FloatingBrioche/aws-data-streaming-app/blob/main/docs/security_check.txt)
 
 This application has been designed to allow the Northcoders marketing team to search for and ingest articles from the Guardian API. The application uses the Python requests library to submit a get request to the API's "search" endpoint using the passed query. Any resulting articles are then uploaded to an AWS SQS queue to be analysed for relevance and suitability downstream.
 
@@ -42,6 +42,9 @@ The application could be expanded to make requests to and aggregate responses fr
 
 ## Setup Instructions
 
+### Dev setup
+To install and test the app locally:
+
 1. **Fork the repo**
 
 2. **Clone the repo**  
@@ -50,7 +53,21 @@ The application could be expanded to make requests to and aggregate responses fr
    cd aws-data-streaming-app 
    ``` 
 
-3. **Add your Guardian API key to your AWS Secrets Manager**
+3. **Create the dev environment**
+    ```bash
+    make requirements
+    ```
+
+4. **Run checks**
+    ```bash
+    make run-checks
+    ```
+    This Makefile command will run pytest, coverage, black and bandit. The coverage report will be stored in docs/coverage.txt and the bandit report in docs/security.txt.
+
+### AWS Deployment
+To set up the CI/CD pipeline and deploy the AWS infrastructure via Terraform:
+
+1. **Add your Guardian API key to your AWS Secrets Manager**
     ```bash
     aws secretsmanager create-secret \
     --name Guardian-API-Key \
@@ -58,14 +75,14 @@ The application could be expanded to make requests to and aggregate responses fr
     --secret-string "[ADD YOUR API KEY HERE]"
     ```
 
-4. **Retrieve and note your secret ARN**
-- Retrive the ARN using the below CLI command. Note it to use in two of the following step.
+2. **Retrieve and note your secret ARN**
+- Retrive the ARN using the below CLI command. Note it to use in two of the following steps.
     ```bash 
     aws secretsmanager describe-secret \
     --secret-id Guardian-API-Key --query 'ARN' --output text
     ```
 
-4. **Create your .tfvars file**
+3. **Create your .tfvars file**
     ```bash
     cat > terraform/terraform.tfvars << EOF
     project_owner_email = "[ADD PROJECT OWNER EMAIL]"
@@ -73,7 +90,7 @@ The application could be expanded to make requests to and aggregate responses fr
     EOF
     ```
 
-5. **Create your Terraform State Bucket**
+4. **Create your Terraform State Bucket**
     ```bash
     aws s3api create-bucket \
     --bucket [ADD YOUR BUCKET NAME] \
@@ -81,11 +98,11 @@ The application could be expanded to make requests to and aggregate responses fr
     --create-bucket-configuration LocationConstraint=[YOUR REGION]
     ```
 
-6. **Update the Terraform fields**
+5. **Update the Terraform fields**
     - Update the backend bucket in the [Terraform providers file](terraform/providers.tf)
     - Update the vars in the [Terraform directory](./terraform/vars.tf)        
 
-7. **Add repo secrets to enable CI pipeline**
+6. **Add repo secrets to enable CI pipeline**
 
 - Go to Settings > Secrets and variables > Actions.
 - Click New repository secret.
@@ -95,20 +112,24 @@ The application could be expanded to make requests to and aggregate responses fr
     - PROJECT_OWNER_EMAIL
     - SECRET_ARN
 
-8. **Run Terraform init, plan and apply**
+7. **Run Terraform init, fmt, validate, plan and apply**
 
 - `cd terraform`
 - `terraform init`
+- `make tf-check` (this Makefile command will run terraform fmt and validate)
 - `terraform plan`
 - `terraform apply`
 
-## **Teardown instructions**
-
-- In the terraform directory, run `terraform destroy`
-
 ## **Tests and checks**
 
-A Makefile is provided using which 
+A Makefile is provided using which offers the following commands:
+
+- `make create-environment`: creates the venv and installs dependencies
+- `make tf-check`: runs the terraform fmt and validate commmands
+- `make security-test`: runs the bandit security check and saves the report to docs/security.txt
+- `make run-black`: runs the black linter
+- `make unit-test`: runs pytest with testdox on the test folder
+- `make get-coverage`: runs coverage and uses the report to update docs/coverage.txt and docs/coverage.svg
 
 ## Usage
 
@@ -138,3 +159,8 @@ aws lambda invoke \
                 }' \
     lambda-response.json
 ```
+
+## **Teardown instructions**
+To tear down the AWS infrastructure:
+
+- In the terraform directory, run `terraform destroy`
