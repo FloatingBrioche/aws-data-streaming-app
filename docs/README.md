@@ -99,8 +99,8 @@ To set up the CI/CD pipeline and deploy the AWS infrastructure via Terraform:
     ```
 
 5. **Update the Terraform fields**
-    - Update the backend bucket in the [Terraform providers file](terraform/providers.tf)
-    - Update the vars in the [Terraform directory](./terraform/vars.tf)        
+    - Update the backend bucket in the Terraform providers file (terraform/providers.tf)
+    - Update the vars file in the Terraform directory (terraform/vars.tf)        
 
 6. **Add repo secrets to enable CI/CD pipeline**
 
