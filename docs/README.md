@@ -102,7 +102,7 @@ To set up the CI/CD pipeline and deploy the AWS infrastructure via Terraform:
     - Update the backend bucket in the [Terraform providers file](terraform/providers.tf)
     - Update the vars in the [Terraform directory](./terraform/vars.tf)        
 
-6. **Add repo secrets to enable CI pipeline**
+6. **Add repo secrets to enable CI/CD pipeline**
 
 - Go to Settings > Secrets and variables > Actions.
 - Click New repository secret.
@@ -122,9 +122,9 @@ To set up the CI/CD pipeline and deploy the AWS infrastructure via Terraform:
 
 ## **Tests and checks**
 
-A Makefile is provided using which offers the following commands:
+A Makefile is provided which offers the following commands:
 
-- `make create-environment`: creates the venv and installs dependencies
+- `make requirements`: creates the venv and installs dependencies
 - `make tf-check`: runs the terraform fmt and validate commmands
 - `make security-test`: runs the bandit security check and saves the report to docs/security.txt
 - `make run-black`: runs the black linter
