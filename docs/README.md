@@ -49,7 +49,7 @@ To install and test the app locally:
 
 2. **Clone the repo**  
    ```bash  
-   git clone https://github.com/FloatingBrioche/aws-data-streaming-app.git
+   git clone https://github.com/[YourGitHubUsername]/aws-data-streaming-app.git
    cd aws-data-streaming-app 
    ``` 
 
