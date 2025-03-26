@@ -47,6 +47,7 @@ def setup_logger(logger_name: str):
         "%(asctime)s %(levelname)s %(name)s %(message)s %(filename)s %(funcName)s"
     )
     json_handler.setFormatter(formatter)
+    logger.handlers = []
     logger.addHandler(json_handler)
     logger.propagate = False
 
