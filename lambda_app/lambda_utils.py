@@ -49,7 +49,7 @@ def setup_logger(logger_name: str):
     json_handler.setFormatter(formatter)
     logger.handlers = []
     logger.addHandler(json_handler)
-    logger.propagate = False
+    # logger.propagate = False
 
     return logger
 
