@@ -5,6 +5,24 @@ import boto3
 from requests import get as get_request
 
 
+class JSONFormatter(logging.Formatter):
+    """A JSON formatter for logging
+
+    Takes a log record and returns the record in serialised JSON format
+    """
+
+    def format(self, record):
+        log_obj = {
+            "asctime": self.formatTime(record, self.datefmt),
+            "levelname": record.levelname,
+            "name": record.name,
+            "message": record.getMessage(),
+            "filename": record.filename,
+            "funcName": record.funcName,
+        }
+        return dumps(log_obj)
+    
+
 def setup_logger(logger_name: str):
     """Returns logger at debug level with JSON formatter
 
@@ -29,9 +47,8 @@ def setup_logger(logger_name: str):
         "%(asctime)s %(levelname)s %(name)s %(message)s %(filename)s %(funcName)s"
     )
     json_handler.setFormatter(formatter)
-    for handler in logger.handlers:
-        logger.removeHandler(handler)
     logger.addHandler(json_handler)
+    logger.propagate = False
 
     return logger
 
@@ -142,19 +159,3 @@ def post_to_sqs(queue: str, messages: list):
     return response
 
 
-class JSONFormatter(logging.Formatter):
-    """A JSON formatter for logging
-
-    Takes a log record and returns the record in serialised JSON format
-    """
-
-    def format(self, record):
-        log_obj = {
-            "asctime": self.formatTime(record, self.datefmt),
-            "levelname": record.levelname,
-            "name": record.name,
-            "message": record.getMessage(),
-            "filename": record.filename,
-            "funcName": record.funcName,
-        }
-        return dumps(log_obj)
